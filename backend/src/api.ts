@@ -1,66 +1,26 @@
-import express, { Request, Response } from "express";
-import cors from "cors";
-import { deposit, getOrder, placeOrder, withdraw } from "./application";
-import Signup from "./Signup";
-import { AccountDAODatabase } from "./AccountDAO";
-import GetAccount from "./GetAccount";
+import { AccountRepositoryDatabase, AccountRepositoryMemory } from "./infra/repository/AccountRepository";
+import Withdraw from "./application/usecase/Withdraw";
+import Deposit from "./application/usecase/Deposit";
+import { OrderRepositoryDatabase } from "./infra/repository/OrderRepository";
+import { ExpressAdapter } from "./infra/http/HttpServer";
+import AccountController from "./infra/controller/AccountController";
+import OrderController from "./infra/controller/OrderController";
+import { PgPromiseAdapter } from "./infra/database/DatabaseConnection";
+import GetAccount from "./application/usecase/GetAccount";
+import GetOrder from "./application/usecase/GetOrder";
+import PlaceOrder from "./application/usecase/PlaceOrder";
+import Signup from "./application/usecase/Signup";
 
-// Driver
-
-const app = express();
-app.use(express.json());
-app.use(cors());
-
-const accountDAO = new AccountDAODatabase();
-const signup = new Signup(accountDAO);
-const getAccount = new GetAccount(accountDAO);
-
-app.post("/signup", async (req: Request, res: Response) => {
-    try {
-        const input = req.body;
-        const output = await signup.execute(input);
-        res.json(output);
-    } catch (e: any) {
-        res.status(422).json({
-            error: e.message
-        });
-    }
-});
-
-app.post("/deposit", async (req: Request, res: Response) => {
-    const input = req.body;
-    await deposit(input);
-    res.end();
-});
-
-app.post("/withdraw", async (req: Request, res: Response) => {
-    try {
-        const input = req.body;
-        await withdraw(input);
-        res.end();
-    } catch (e: any) {
-        res.status(422).json({
-            error: e.message
-        });
-    }
-});
-
-app.post("/place_order", async (req: Request, res: Response) => {
-    const input = req.body;
-    const output = await placeOrder(input);
-    res.json(output);
-});
-
-app.get("/orders/:orderId", async (req: Request, res: Response) => {
-    const orderId = req.params.orderId;
-    const output = await getOrder(orderId);
-    res.json(output);
-});
-
-app.get("/accounts/:accountId", async (req: Request, res: Response) => {
-    const accountId = req.params.accountId;
-    const output = await getAccount.execute(accountId);
-    res.json(output);
-});
-
-app.listen(3000);
+const httpServer = new ExpressAdapter();
+const connection = new PgPromiseAdapter();
+const accountRepository = new AccountRepositoryDatabase(connection);
+const orderRepository = new OrderRepositoryDatabase(connection);
+const signup = new Signup(accountRepository);
+const getAccount = new GetAccount(accountRepository);
+const withdraw = new Withdraw(accountRepository);
+const deposit = new Deposit(accountRepository);
+const placeOrder = new PlaceOrder(orderRepository);
+const getOrder = new GetOrder(orderRepository);
+AccountController.config(httpServer, signup, deposit, withdraw, getAccount);
+OrderController.config(httpServer, placeOrder, getOrder);
+httpServer.listen(3000);
