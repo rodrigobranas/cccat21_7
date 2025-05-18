@@ -26,7 +26,7 @@ export default class ExecuteOrder {
             if (!highestBuy) break;
             if (!lowestSell) break;
             if (highestBuy.price < lowestSell.price) break;
-            const fillQuantity = Math.min(highestBuy.quantity, lowestSell.quantity);
+            const fillQuantity = Math.min(highestBuy.getAvailableQuantity(), lowestSell.getAvailableQuantity());
             const fillPrice = (highestBuy.timestamp.getTime() > lowestSell.timestamp.getTime()) ? lowestSell.price : highestBuy.price;
             const tradeSide = (highestBuy.timestamp.getTime() > lowestSell.timestamp.getTime()) ? "buy" : "sell";
             highestBuy.fill(fillQuantity, fillPrice);
