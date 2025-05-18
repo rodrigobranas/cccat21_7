@@ -6,13 +6,17 @@ axios.defaults.validateStatus = () => true;
 let ws: WebSocket;
 let messages: any[];
 
-beforeEach(() => {
+beforeAll(async () => {
     messages = [];
     ws = new WebSocket("ws://localhost:3001");
     ws.on("message", (data) => {
         const message = JSON.parse(data.toString());
         messages.push(message);
     });
+});
+
+beforeEach(() => {
+    messages = [];
 });
 
 test("Deve criar uma conta válida", async () => {
@@ -243,7 +247,7 @@ test("Deve criar várias ordens de compra e venda e executá-las", async () => {
     expect(outputGetDepth.buys).toHaveLength(0);
 });
 
-test.only("Deve criar várias ordens de compra e venda e executá-las", async () => {
+test("Deve criar várias ordens de compra e venda e executá-las", async () => {
     const marketId = `BTC/USD${Math.random()}`;
     const inputSignup = {
         name: "John Doe",
@@ -282,9 +286,10 @@ test.only("Deve criar várias ordens de compra e venda e executá-las", async ()
     const outputPlaceOrder3 = responsePlaceOrder3.data;
     const responseGetOrder3 = await axios.get(`http://localhost:3000/orders/${outputPlaceOrder3.orderId}`);
     const outputGetOrder3 = responseGetOrder3.data;
-    console.log(outputGetOrder3);
+    expect(outputGetOrder3.fillPrice).toBe(94250);
 });
 
-afterEach(async () => {
-    await ws.close();
+
+afterAll(async () => {
+    ws.close();
 });

@@ -20,6 +20,7 @@ export class OrderRepositoryDatabase implements OrderRepository {
     
     async getOrderById (orderId: string): Promise<Order> {
         const [orderData] = await this.connection.query("select * from ccca.order where order_id = $1", [orderId]);
+        if (!orderData) throw new Error("Order not found");
         return new Order(orderData.order_id, orderData.market_id, orderData.account_id, orderData.side, parseFloat(orderData.quantity), parseFloat(orderData.price), orderData.status, orderData.timestamp, parseFloat(orderData.fill_quantity), parseFloat(orderData.fill_price));
     }
 

@@ -19,7 +19,7 @@ export class WSSAdapter implements WebSocketServer {
 
     async broadcast(message: any): Promise<void> {
         for (const connection of this.connections) {
-            connection.send(Buffer.from(JSON.stringify(message)));
+            await connection.send(Buffer.from(JSON.stringify(message)));
         }
     }
 
