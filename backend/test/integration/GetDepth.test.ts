@@ -14,12 +14,11 @@ let marketId: string;
 beforeEach(async () => {
     connection = new PgPromiseAdapter();
     const orderRepository = new OrderRepositoryDatabase(connection);
-    await orderRepository.deleteAll();
     const accountRepository = new AccountRepositoryDatabase(connection);
     signup = new Signup(accountRepository);
     placeOrder = new PlaceOrder(orderRepository);
     getDepth = new GetDepth(orderRepository);
-    marketId = "BTC/USD";
+    marketId = `BTC/USD${Math.random()}`;
 });
 
 test("Deve retornar o depth após a realização de ordens de compra e venda sem precision", async () => {
