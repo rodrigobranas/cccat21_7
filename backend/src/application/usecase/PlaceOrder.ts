@@ -11,7 +11,7 @@ export default class PlaceOrder {
     async execute (input: Input): Promise<Output> {
         const order = Order.create(input.marketId, input.accountId, input.side, input.quantity, input.price);
         await this.orderRepository.saveOrder(order);
-        await this.mediator.notifyAll("orderPlaced", { marketId: input.marketId });
+        await this.mediator.notifyAll("orderPlaced", order);
         return {
             orderId: order.orderId
         }

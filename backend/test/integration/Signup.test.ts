@@ -54,7 +54,6 @@ test("Deve criar uma conta válida com stub", async () => {
         password: "asdQWE123"
     }
     const getAccountByIdStub = sinon.stub(AccountRepositoryDatabase.prototype, "getAccountById").resolves(Account.create(inputSignup.name, inputSignup.email, inputSignup.document, inputSignup.password));
-    const getAccountAssets = sinon.stub(AccountRepositoryDatabase.prototype, "getAccountAssets").resolves([]);
     const outputSignup = await signup.execute(inputSignup);
     expect(outputSignup.accountId).toBeDefined();
     const outputGetAccount = await getAccount.execute(outputSignup.accountId)
@@ -63,7 +62,6 @@ test("Deve criar uma conta válida com stub", async () => {
     expect(outputGetAccount.document).toBe(inputSignup.document);
     saveAccountStub.restore();
     getAccountByIdStub.restore();
-    getAccountAssets.restore();
 });
 
 test("Deve criar uma conta válida com spy", async () => {
@@ -81,7 +79,7 @@ test("Deve criar uma conta válida com spy", async () => {
     expect(outputGetAccount.email).toBe(inputSignup.email);
     expect(outputGetAccount.document).toBe(inputSignup.document);
     expect(saveAccountSpy.calledOnce).toBe(true);
-    const account = new Account(outputSignup.accountId, inputSignup.name, inputSignup.email, inputSignup.document, inputSignup.password);
+    const account = new Account(outputSignup.accountId, inputSignup.name, inputSignup.email, inputSignup.document, inputSignup.password, []);
     expect(saveAccountSpy.calledWith(account)).toBe(true);
     saveAccountSpy.restore();
 });
@@ -95,8 +93,7 @@ test("Deve criar uma conta válida com mock", async () => {
         document: "97456321558",
         password: "asdQWE123"
     }
-    accountRepositoryMock.expects("getAccountById").once().resolves(inputSignup);
-    accountRepositoryMock.expects("getAccountAssets").once().resolves([]);
+    accountRepositoryMock.expects("getAccountById").once().resolves(new Account("", inputSignup.name, inputSignup.email, inputSignup.document, inputSignup.password, []));
     const outputSignup = await signup.execute(inputSignup);
     expect(outputSignup.accountId).toBeDefined();
     const outputGetAccount = await getAccount.execute(outputSignup.accountId)

@@ -6,9 +6,9 @@ export default class Withdraw {
     }
 
     async execute (input: Input) {
-        const accountAsset = await this.accountRepository.getAccountAsset(input.accountId, input.assetId);
-        accountAsset.withdraw(input.quantity);
-        await this.accountRepository.updateAccountAsset(accountAsset);
+        const account = await this.accountRepository.getAccountById(input.accountId);
+        account.withdraw(input.assetId, input.quantity);
+        await this.accountRepository.updateAccount(account);
     }
 }
 
