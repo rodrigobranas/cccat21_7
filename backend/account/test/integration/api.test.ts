@@ -8,7 +8,7 @@ let messages: any[];
 
 beforeAll(async () => {
     messages = [];
-    ws = new WebSocket("ws://localhost:3001");
+    ws = new WebSocket("ws://localhost:3002");
     ws.on("message", (data) => {
         const message = JSON.parse(data.toString());
         messages.push(message);
@@ -201,6 +201,7 @@ test("Deve criar ordens de compra e venda e executá-las", async () => {
     expect(outputGetOrder2.fillQuantity).toBe(1);
     expect(outputGetOrder2.fillPrice).toBe(94000);
     expect(outputGetOrder2.status).toBe("closed");
+    await sleep(500);
     const responseGetDepth = await axios.get(`http://localhost:3000/depth/${marketId.replace("/", "-")}`);
     const outputGetDepth = responseGetDepth.data;
     expect(outputGetDepth.sells).toHaveLength(0);
@@ -214,7 +215,7 @@ test("Deve criar ordens de compra e venda e executá-las", async () => {
     expect(outputGetTrades).toHaveLength(1);
 });
 
-test.only("Deve criar várias ordens de compra e venda e executá-las", async () => {
+test("Deve criar várias ordens de compra e venda e executá-las", async () => {
     const marketId = `BTC/USD${Math.random()}`;
     const inputSignup = {
         name: "John Doe",
