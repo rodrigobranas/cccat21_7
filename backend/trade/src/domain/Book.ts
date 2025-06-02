@@ -50,6 +50,7 @@ export default class Book extends Observable {
         const orders = [...this.buys, ...this.sells];
         const index = groupOrders(orders, 1);
         const depth: any = {
+            marketId: this.marketId,
             buys: [],
             sells: []
         }

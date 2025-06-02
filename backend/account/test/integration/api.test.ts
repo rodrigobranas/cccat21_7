@@ -206,10 +206,11 @@ test("Deve criar ordens de compra e venda e executá-las", async () => {
     const outputGetDepth = responseGetDepth.data;
     expect(outputGetDepth.sells).toHaveLength(0);
     expect(outputGetDepth.buys).toHaveLength(0);
-    expect(messages.at(0).buys).toHaveLength(0);
-    expect(messages.at(0).sells).toHaveLength(1);
-    expect(messages.at(1).buys).toHaveLength(0);
-    expect(messages.at(1).sells).toHaveLength(0);
+    const testMessages = messages.filter((message) => message.marketId === marketId);
+    expect(testMessages.at(0).buys).toHaveLength(0);
+    expect(testMessages.at(0).sells).toHaveLength(1);
+    expect(testMessages.at(1).buys).toHaveLength(0);
+    expect(testMessages.at(1).sells).toHaveLength(0);
     const responseGetTrades = await axios.get(`http://localhost:3000/markets/${marketId.replace("/", "-")}/trades`);
     const outputGetTrades = responseGetTrades.data;
     expect(outputGetTrades).toHaveLength(1);
