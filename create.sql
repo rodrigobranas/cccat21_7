@@ -43,3 +43,10 @@ create table ccca.trade (
 	timestamp timestamptz,
 	primary key (trade_id)
 );
+
+create table ccca.depth (
+	market_id text,
+	side text,
+	price numeric,
+	quantity numeric
+);

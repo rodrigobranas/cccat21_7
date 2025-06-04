@@ -1,4 +1,5 @@
 export default class Order {
+    executedQuantity: number = 0;
 
     constructor (
         readonly orderId: string,
@@ -32,6 +33,7 @@ export default class Order {
     fill (quantity: number, price: number) {
         this.fillPrice = ((this.fillQuantity * this.fillPrice) + (quantity * price))/ (this.fillQuantity + quantity);
         this.fillQuantity += quantity;
+        this.executedQuantity = quantity;
         if (this.getAvailableQuantity() === 0) {
             this.status = "closed";
         }

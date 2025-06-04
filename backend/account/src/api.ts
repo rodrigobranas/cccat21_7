@@ -28,7 +28,7 @@ import BookQueue from "./infra/queue/BookQueue";
 async function main () {
     const httpServer = new ExpressAdapter();
     // const httpServer = new HapiAdapter();
-    const websocketServer = new WSSAdapter(3001);
+    // const websocketServer = new WSSAdapter(3001);
     const connection = new PgPromiseAdapter();
     const queue = new RabbitMQAdapter();
     await queue.connect();
@@ -55,7 +55,7 @@ async function main () {
     AccountController.config(httpServer, signup, deposit, withdraw, getAccount);
     OrderController.config(httpServer, placeOrder, getOrder, getDepth);
     TradeController.config(httpServer, getTrades);
-    BookQueue.config(queue, websocketServer, orderRepository, tradeRepository);
+    BookQueue.config(queue, orderRepository, tradeRepository);
     httpServer.listen(3000);
 }
 

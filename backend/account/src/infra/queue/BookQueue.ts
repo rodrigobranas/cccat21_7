@@ -9,13 +9,13 @@ import Queue from "./Queue";
 
 export default class BookQueue {
 
-    static config (queue: Queue, websocketServer: WebSocketServer, orderRepository: OrderRepository, tradeRepository: TradeRepository) {
-        queue.consume("orderFilled", async (input: any) => {
+    static config (queue: Queue, orderRepository: OrderRepository, tradeRepository: TradeRepository) {
+        queue.consume("orderFilled.updateOrder", async (input: any) => {
             console.log("orderFilled", new Date());
             const order = new Order(input.orderId, input.marketId, input.accountId, input.side, input.quantity, input.price, input.status, new Date(input.timestamp), input.fillQuantity, input.fillPrice);
             await orderRepository.updateOrder(order);
         });
-        queue.consume("tradeCreated", async (input: any) => {
+        queue.consume("tradeCreated.saveTrade", async (input: any) => {
             console.log("tradeCreated", new Date());
             const trade = new Trade(input.tradeId, input.marketId, input.buyOrderId, input.sellOrderId, input.side, input.quantity, input.price, new Date(input.timestamp));
             await tradeRepository.saveTrade(trade);
