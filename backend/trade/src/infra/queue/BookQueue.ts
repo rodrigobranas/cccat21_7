@@ -5,6 +5,14 @@ import BookCache from "../cache/BookCache";
 import WebSocketServer from "../websocket/WebSocketServer";
 import Queue from "./Queue";
 
+function sleep (time: number) {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve(true);
+        }, time);
+    });
+}
+
 export default class BookQueue {
 
     static config (queue: Queue, websocketServer: WebSocketServer, bookCache: BookCache) {
@@ -18,10 +26,12 @@ export default class BookQueue {
                 book = new Book(order.marketId);
                 book.register("orderFilled", async (order: Order) => {
                     // await orderRepository.updateOrder(order);
+                    await sleep(100);
                     await queue.publish("orderFilled", order);
                 });
                 book.register("tradeCreated", async (trade: Trade) => {
                     // await tradeRepository.saveTrade(trade);
+                    await sleep(100);
                     await queue.publish("tradeCreated", trade);
                 });
                 bookCache.add(book.marketId, book);

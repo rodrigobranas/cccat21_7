@@ -23,8 +23,8 @@ async function main () {
             marketId,
             accountId: outputSignup.accountId,
             side: (Math.random() > 0.5) ? "sell" : "buy",
-            quantity: 1,//Math.round(Math.random() * 10) + 1,
-            price: 94000//Math.round(94000 + ((Math.random() * 1000) * (Math.random() > 0.5 ? 1 : -1)))
+            quantity: Math.round(Math.random() * 10) + 1,
+            price: Math.round(94000 + ((Math.random() * 1000) * (Math.random() > 0.5 ? 1 : -1)))
         }
         await axios.post("http://localhost:3000/place_order", inputPlaceOrder1);
         await sleep(1000);
